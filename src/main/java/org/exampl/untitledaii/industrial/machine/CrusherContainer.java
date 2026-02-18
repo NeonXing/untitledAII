@@ -20,6 +20,10 @@ public class CrusherContainer extends AbstractContainerMenu {
     private final CrusherBlockEntity blockEntity;
     private final ContainerLevelAccess levelAccess;
 
+    public CrusherContainer(int id, Inventory inv, FriendlyByteBuf data) {
+        this(id, inv, (CrusherBlockEntity) inv.player.level().getBlockEntity(data.readBlockPos()));
+    }
+
     public CrusherContainer(int id, Inventory inv, CrusherBlockEntity te) {
         super(ModContainers.CRUSHER.get(), id);
         this.blockEntity = te;

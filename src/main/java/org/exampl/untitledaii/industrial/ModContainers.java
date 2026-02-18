@@ -1,6 +1,7 @@
 package org.exampl.untitledaii.industrial;
 
 import net.minecraft.world.inventory.MenuType;
+import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -19,5 +20,5 @@ public class ModContainers {
         DeferredRegister.create(ForgeRegistries.MENU_TYPES, Untitledaii.MODID);
 
     public static final RegistryObject<MenuType<CrusherContainer>> CRUSHER = 
-        CONTAINERS.register("crusher", () -> CrusherContainer::new);
+        CONTAINERS.register("crusher", () -> IForgeMenuType.create(CrusherContainer::new));
 }

@@ -8,6 +8,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
+import org.exampl.untitledaii.industrial.ModBlockEntities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,17 +41,20 @@ public class EnergyCableBlockEntity extends BlockEntity {
         // Transfer energy to connected blocks
         for (Direction direction : Direction.values()) {
             BlockPos neighborPos = getBlockPos().relative(direction);
-            level.getCapability(ForgeCapabilities.ENERGY, neighborPos, direction.getOpposite())
-                .ifPresent(neighborStorage -> {
-                    int energyToTransfer = Math.min(
-                        energyStorage.extractEnergy(TRANSFER_RATE, true),
-                        neighborStorage.receiveEnergy(TRANSFER_RATE, true)
-                    );
-                    if (energyToTransfer > 0) {
-                        energyStorage.extractEnergy(energyToTransfer, false);
-                        neighborStorage.receiveEnergy(energyToTransfer, false);
-                    }
-                });
+            BlockEntity neighborBE = level.getBlockEntity(neighborPos);
+            if (neighborBE != null) {
+                neighborBE.getCapability(ForgeCapabilities.ENERGY, direction.getOpposite())
+                    .ifPresent(neighborStorage -> {
+                        int energyToTransfer = Math.min(
+                            energyStorage.extractEnergy(TRANSFER_RATE, true),
+                            neighborStorage.receiveEnergy(TRANSFER_RATE, true)
+                        );
+                        if (energyToTransfer > 0) {
+                            energyStorage.extractEnergy(energyToTransfer, false);
+                            neighborStorage.receiveEnergy(energyToTransfer, false);
+                        }
+                    });
+            }
         }
     }
 

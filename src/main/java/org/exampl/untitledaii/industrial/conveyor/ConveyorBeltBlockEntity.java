@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.exampl.untitledaii.industrial.ModBlocks;
 import org.exampl.untitledaii.industrial.ModBlockEntities;
 
 import java.util.List;
@@ -39,9 +40,8 @@ public class ConveyorBeltBlockEntity extends BlockEntity {
 
         // Find items above belt
         List<Entity> entities = level.getEntitiesOfClass(
-            Entity.class,
-            new AABB(getBlockPos()).inflate(0.5).move(0, OFFSET_Y, 0),
-            entity -> !(entity instanceof ConveyorBeltBlockEntity)
+            ItemEntity.class,
+            new AABB(getBlockPos()).inflate(0.5).move(0, OFFSET_Y, 0)
         );
 
         for (Entity entity : entities) {
@@ -68,7 +68,7 @@ public class ConveyorBeltBlockEntity extends BlockEntity {
     }
 
     /**
-     * Gets the movement direction of this conveyor belt.
+     * Gets movement direction of this conveyor belt.
      *
      * @return Movement direction
      */

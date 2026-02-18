@@ -11,6 +11,7 @@ import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -20,6 +21,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.exampl.untitledaii.industrial.ModBlockEntities;
 import org.exampl.untitledaii.industrial.ModBlocks;
+import org.exampl.untitledaii.industrial.ModContainers;
+import org.exampl.untitledaii.industrial.ModItems;
+import org.exampl.untitledaii.industrial.machine.recipes.MachineRecipeType;
 import org.slf4j.Logger;
 
 /**
@@ -66,9 +70,8 @@ public class Untitledaii {
         ModBlocks.BLOCKS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModContainers.CONTAINERS.register(modEventBus);
-        org.exampl.untitledaii.industrial.machine.recipes.MachineRecipeType.RECIPE_TYPE.register(modEventBus);
-        org.exampl.untitledaii.industrial.machine.recipes.MachineRecipeType.SERIALIZER.register(modEventBus);
-        ITEMS.register(modEventBus);
+        ModItems.ITEMS.register(modEventBus);
+        MachineRecipeType.RECIPE_TYPES.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
         
         MinecraftForge.EVENT_BUS.register(this);

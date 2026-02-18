@@ -9,8 +9,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.exampl.untitledaii.Untitledaii;
 import org.exampl.untitledaii.industrial.conveyor.ConveyorBeltBlock;
+import org.exampl.untitledaii.industrial.machine.CrusherBlock;
 import org.exampl.untitledaii.industrial.energy.EnergyCableBlock;
-import org.exampl.untitledaii.industrial.machine.CrusherBlockEntity;
 import org.exampl.untitledaii.industrial.pipe.ItemPipeBlock;
 
 /**

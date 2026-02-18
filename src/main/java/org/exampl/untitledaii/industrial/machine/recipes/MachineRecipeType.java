@@ -30,16 +30,16 @@ public class MachineRecipeType implements RecipeType<MachineRecipe>, RecipeSeria
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public static final String ID = "machine";
-    public static final ResourceLocation RESOURCE_ID =
+    public static final ResourceLocation TYPE_ID =
         ResourceLocation.fromNamespaceAndPath(Untitledaii.MODID, ID);
+    public static final ResourceLocation SERIALIZER_ID =
+        ResourceLocation.fromNamespaceAndPath(Untitledaii.MODID, "serializer");
 
-    public static final RegistryObject<RecipeType<MachineRecipe>> RECIPE_TYPE =
-        DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, Untitledaii.MODID)
-            .register(ID, () -> new MachineRecipeType());
-
-    public static final RegistryObject<RecipeSerializer<MachineRecipe>> SERIALIZER =
-        DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Untitledaii.MODID)
-            .register(ID, () -> new MachineRecipeType());
+    public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = 
+        DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, Untitledaii.MODID);
+    
+    public static final RegistryObject<RecipeType<MachineRecipe>> RECIPE_TYPE = 
+        RECIPE_TYPES.register(ID, () -> new MachineRecipeType());
 
     @Override
     public String toString() {
@@ -52,14 +52,14 @@ public class MachineRecipeType implements RecipeType<MachineRecipe>, RecipeSeria
         try {
             // Parse inputs
             var inputsArray = json.getAsJsonArray("inputs");
-            NonNullList<Ingredient> inputs = NonNullList.withSize(inputsArray.size());
+            NonNullList<Ingredient> inputs = NonNullList.withSize(inputsArray.size(), Ingredient.EMPTY);
             for (int i = 0; i < inputsArray.size(); i++) {
                 inputs.set(i, Ingredient.fromJson(inputsArray.get(i)));
             }
 
             // Parse outputs
             var outputsArray = json.getAsJsonArray("outputs");
-            NonNullList<ItemStack> outputs = NonNullList.withSize(outputsArray.size());
+            NonNullList<ItemStack> outputs = NonNullList.withSize(outputsArray.size(), ItemStack.EMPTY);
             for (int i = 0; i < outputsArray.size(); i++) {
                 JsonObject outputObj = outputsArray.get(i).getAsJsonObject();
                 String itemId = outputObj.get("item").getAsString();
@@ -107,7 +107,8 @@ public class MachineRecipeType implements RecipeType<MachineRecipe>, RecipeSeria
     @Nullable
     public static MachineRecipe findRecipe(Level level, ItemStack input) {
         RecipeManager recipeManager = level.getRecipeManager();
-        return recipeManager.getAllRecipesFor(RECIPE_TYPE.get()).stream()
+        RecipeType<MachineRecipe> type = (RecipeType<MachineRecipe>) RECIPE_TYPE.get();
+        return recipeManager.getAllRecipesFor(type).stream()
             .filter(recipe -> recipe.matches(input))
             .findFirst()
             .orElse(null);
@@ -123,7 +124,8 @@ public class MachineRecipeType implements RecipeType<MachineRecipe>, RecipeSeria
     @Nullable
     public static MachineRecipe findRecipe(Level level, NonNullList<ItemStack> inputs) {
         RecipeManager recipeManager = level.getRecipeManager();
-        return recipeManager.getAllRecipesFor(RECIPE_TYPE.get()).stream()
+        RecipeType<MachineRecipe> type = (RecipeType<MachineRecipe>) RECIPE_TYPE.get();
+        return recipeManager.getAllRecipesFor(type).stream()
             .filter(recipe -> recipe.matches(inputs))
             .findFirst()
             .orElse(null);

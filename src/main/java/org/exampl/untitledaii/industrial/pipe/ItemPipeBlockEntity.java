@@ -3,6 +3,7 @@ package org.exampl.untitledaii.industrial.pipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -54,19 +55,22 @@ public class ItemPipeBlockEntity extends BlockEntity implements IPipe {
         Direction facing = getBlockState().getValue(ItemPipeBlock.FACING);
         BlockPos targetPos = getBlockPos().relative(facing);
         
-        level.getCapability(ForgeCapabilities.ITEMS, targetPos, facing.getOpposite())
-            .ifPresent(targetHandler -> {
-                int count = Math.min(stack.getCount(), 64);
-                ItemStack transferred = transfer(stack, targetHandler, count);
-                
-                if (!transferred.isEmpty()) {
-                    stack.shrink(transferred.getCount());
-                    if (stack.isEmpty()) {
-                        itemHandler.setStackInSlot(0, ItemStack.EMPTY);
+        BlockEntity targetBE = level.getBlockEntity(targetPos);
+        if (targetBE != null) {
+            targetBE.getCapability(ForgeCapabilities.ITEM_HANDLER, facing.getOpposite())
+                .ifPresent(targetHandler -> {
+                    int count = Math.min(stack.getCount(), 64);
+                    ItemStack transferred = transfer(stack, targetHandler, count);
+                    
+                    if (!transferred.isEmpty()) {
+                        stack.shrink(transferred.getCount());
+                        if (stack.isEmpty()) {
+                            itemHandler.setStackInSlot(0, ItemStack.EMPTY);
+                        }
+                        transferCooldown = TRANSFER_COOLDOWN;
                     }
-                    transferCooldown = TRANSFER_COOLDOWN;
-                }
-            });
+                });
+        }
     }
 
     private ItemStack transfer(ItemStack stack, IItemHandler targetHandler, int maxCount) {
@@ -80,7 +84,7 @@ public class ItemPipeBlockEntity extends BlockEntity implements IPipe {
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ITEMS) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return itemHandlerCap.cast();
         }
         return super.getCapability(cap, side);
@@ -92,8 +96,7 @@ public class ItemPipeBlockEntity extends BlockEntity implements IPipe {
         super.invalidateCaps();
     }
 
-    @Override
-    public PipeType getType() {
+    public PipeType getPipeType() {
         return PipeType.ITEM;
     }
 

@@ -140,7 +140,7 @@ public class MachineEnergyStorage extends EnergyStorage implements ICapabilityPr
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeHooks.ENERGY_CAPABILITY) {
+        if (cap == ForgeCapabilities.ENERGY) {
             return lazyEnergy.cast();
         }
         return LazyOptional.empty();

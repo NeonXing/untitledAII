@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -33,9 +34,9 @@ import org.jetbrains.annotations.Nullable;
  * @author AVA Industrial Team
  * @since 1.0.0
  */
-public abstract class BaseMachineBlockEntity extends MachineBlockEntity implements IMachine {
+public abstract class BaseMachineBlockEntity extends BlockEntity implements IMachine {
 
-    protected final MachineEnergyStorage energyStorage;
+    protected final org.exampl.untitledaii.industrial.energy.MachineEnergyStorage energyStorage;
     protected final ItemStackHandler inventory;
     protected int processTime;
     protected int maxProcessTime;
@@ -251,16 +252,7 @@ public abstract class BaseMachineBlockEntity extends MachineBlockEntity implemen
         return modifier;
     }
 
-    @Override
-    protected void updateProcessingState() {
-        boolean shouldProcess = canProcess();
-        float speedModifier = getSpeedModifier();
-        
-        if (shouldProcess != isProcessing) {
-            isProcessing = shouldProcess;
-            setChanged();
-        }
-    }
+
 
     @NotNull
     @Override

@@ -55,7 +55,7 @@ public class EnergyItem extends Item implements ICapabilityProvider {
 
     @Override
     public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, net.minecraft.core.Direction side) {
-        if (cap == net.minecraftforge.common.ForgeHooks.ENERGY_CAPABILITY) {
+        if (cap == net.minecraftforge.common.capabilities.ForgeCapabilities.ENERGY) {
             return net.minecraftforge.common.util.LazyOptional.of(() -> energyStorage).cast();
         }
         return net.minecraftforge.common.util.LazyOptional.empty();

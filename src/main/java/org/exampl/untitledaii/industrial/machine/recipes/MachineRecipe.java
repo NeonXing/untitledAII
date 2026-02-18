@@ -108,12 +108,12 @@ public class MachineRecipe {
     public static MachineRecipe fromNetwork(FriendlyByteBuf buffer) {
         ResourceLocation id = buffer.readResourceLocation();
         int inputCount = buffer.readInt();
-        NonNullList<Ingredient> inputs = NonNullList.withSize(inputCount);
+        NonNullList<Ingredient> inputs = NonNullList.withSize(inputCount, Ingredient.EMPTY);
         for (int i = 0; i < inputCount; i++) {
             inputs.set(i, Ingredient.fromNetwork(buffer));
         }
         int outputCount = buffer.readInt();
-        NonNullList<ItemStack> outputs = NonNullList.withSize(outputCount);
+        NonNullList<ItemStack> outputs = NonNullList.withSize(outputCount, ItemStack.EMPTY);
         for (int i = 0; i < outputCount; i++) {
             outputs.set(i, buffer.readItem());
         }
