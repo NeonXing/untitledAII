@@ -35,7 +35,7 @@ public class CrusherBlockEntity extends BaseMachineBlockEntity {
     public CrusherBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.CRUSHER.get(), pos, state,
             ENERGY_CAPACITY, MAX_ENERGY_RECEIVE, MAX_ENERGY_EXTRACT,
-            2); // 2 slots: input and output
+            3, 2); // 3 slots: input, output, upgrade. Upgrade at slot 2
 
         // Set max process time
         this.maxProcessTime = PROCESS_TIME;

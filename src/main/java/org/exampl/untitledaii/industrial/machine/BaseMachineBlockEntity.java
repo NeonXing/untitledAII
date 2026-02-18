@@ -13,6 +13,8 @@ import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import org.exampl.untitledaii.industrial.machine.upgrades.MachineUpgrade;
+import org.exampl.untitledaii.industrial.machine.upgrades.MachineUpgrade.UpgradeType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
  *   <li>Item inventory</li>
  *   <li>Recipe processing</li>
  *   <li>Progress tracking</li>
+ *   <li>Upgrade system</li>
  * </ul>
  *
  * @author AVA Industrial Team
@@ -37,14 +40,16 @@ public abstract class BaseMachineBlockEntity extends MachineBlockEntity implemen
     protected int processTime;
     protected int maxProcessTime;
     protected boolean isProcessing;
+    protected final int upgradeSlot;
 
     public BaseMachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
                                   int energyCapacity, int maxEnergyReceive, int maxEnergyExtract,
-                                  int inventorySize) {
+                                  int inventorySize, int upgradeSlotIndex) {
         super(type, pos, state);
         this.energyStorage = new MachineEnergyStorage(energyCapacity, maxEnergyReceive, maxEnergyExtract,
             this::onEnergyChanged);
         this.inventory = new ItemStackHandler(inventorySize);
+        this.upgradeSlot = upgradeSlotIndex;
         this.processTime = 0;
         this.maxProcessTime = 0;
         this.isProcessing = false;
@@ -210,6 +215,51 @@ public abstract class BaseMachineBlockEntity extends MachineBlockEntity implemen
 
     protected void onEnergyChanged() {
         setChanged();
+    }
+
+    /**
+     * Gets speed modifier from upgrades.
+     *
+     * @return Speed multiplier (1.0 = normal)
+     */
+    protected float getSpeedModifier() {
+        float modifier = 1.0f;
+        ItemStack upgradeStack = inventory.getStackInSlot(upgradeSlot);
+        if (!upgradeStack.isEmpty() && upgradeStack.getItem() instanceof MachineUpgrade) {
+            MachineUpgrade.UpgradeType type = ((MachineUpgrade) upgradeStack.getItem()).getType();
+            if (type == MachineUpgrade.UpgradeType.SPEED_UPGRADE) {
+                modifier += type.getSpeedModifier() * upgradeStack.getCount();
+            }
+        }
+        return modifier;
+    }
+
+    /**
+     * Gets energy modifier from upgrades.
+     *
+     * @return Energy modifier (1.0 = normal, <1.0 = more efficient)
+     */
+    protected float getEnergyModifier() {
+        float modifier = 1.0f;
+        ItemStack upgradeStack = inventory.getStackInSlot(upgradeSlot);
+        if (!upgradeStack.isEmpty() && upgradeStack.getItem() instanceof MachineUpgrade) {
+            MachineUpgrade.UpgradeType type = ((MachineUpgrade) upgradeStack.getItem()).getType();
+            if (type == MachineUpgrade.UpgradeType.ENERGY_UPGRADE) {
+                modifier += type.getEnergyModifier() * upgradeStack.getCount();
+            }
+        }
+        return modifier;
+    }
+
+    @Override
+    protected void updateProcessingState() {
+        boolean shouldProcess = canProcess();
+        float speedModifier = getSpeedModifier();
+        
+        if (shouldProcess != isProcessing) {
+            isProcessing = shouldProcess;
+            setChanged();
+        }
     }
 
     @NotNull
