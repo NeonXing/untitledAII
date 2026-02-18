@@ -1,0 +1,60 @@
+---
+description: 
+alwaysApply: true
+enabled: true
+updatedAt: 2026-02-18T01:42:04.098Z
+provider: 
+---
+
+# AVA模组开发性能优化规范
+
+## 核心优化原则
+
+### 1. Tick优化
+- 使用 `tickCount % N == 0` 节流逻辑,避免每tick执行
+- PlayerTickEvent 优先使用 `Phase.END`
+- 及时取消不需要的事件监听器,防止内存泄漏
+
+### 2. 对象分配优化
+- 热点循环(render/tick/getUpdateTag)禁止创建新对象
+- 频繁使用的字段使用 `static final` 缓存
+- 优先使用基本类型(int)而非包装类(Integer)
+- 使用对象池复用粒子、弹道实体
+
+### 3. 渲染优化
+- 使用 MultiBufferSource 和 VertexConsumer 批处理绘制
+- PoseStack 和 buffer 在渲染循环外创建并复用
+- 使用正确的 RenderType 分组几何体
+- 实现距离剔除(Distance Culling)
+- 枪械模型使用 IClientItemExtensions,缓存 BakedModel
+
+### 4. 算法优化
+- 寻路使用优化后的 A* 算法
+- 启发式函数选择 Octile 距离或曼哈顿距离
+- 开放列表使用二叉堆 O(log n) 或斐波那契堆
+- 封闭列表使用 HashSet/HashMap O(1) 判断
+- 节点坐标压缩为 long 类型
+- 超远距离使用分层 A*
+
+### 5. 多线程优化
+- 耗时操作(寻路、世界生成)使用异步线程
+- 使用 CompletableFuture 或自定义线程池
+- 避免 CompletableFuture.get() 在主线程阻塞
+
+### 6. 数据访问优化
+- 缓存区块或高度图数据
+- 使用空间索引结构(八叉树)快速判断
+- 避免 tick 内重复查询世界状态
+
+## 性能分析工具
+- 使用 Spark Profiler 分析性能瓶颈
+- F3 调试屏幕监控 ms/tick 和 fps
+- 先分析后优化,不盲目优化
+
+## 参考项目
+- Embeddium: 渲染优化
+- Lithium: 游戏逻辑优化
+- Starlight: 光照引擎优化
+- C2ME: 多线程区块管理
+- Iris: 着色器优化
+- MC-AStar: 寻路算法优化

@@ -1,0 +1,74 @@
+---
+description: 
+alwaysApply: true
+enabled: true
+updatedAt: 2026-02-18T01:42:13.143Z
+provider: 
+---
+
+# AVA枪械渲染优化规范
+
+## 枪械特效渲染
+
+### 枪口火光(Muzzle Flash)
+- 使用 ParticleEngine 或自定义 ParticleProvider
+- 禁止使用完整 Entity 实现简单粒子
+- 实现距离剔除: `distance > MAX_RENDER_DISTANCE_SQ` 时跳过
+- 限制最大粒子数量,使用对象池复用
+
+### 弹道轨迹(Tracers)
+- 使用 LineRenderer 绘制线条
+- 或使用实例化四边形(Instanced Quads)
+- 避免 Per-Frame 分配 Vec3 对象
+- 复用顶点缓冲区
+
+### 子弹命中效果(Bullet Hits)
+- 使用粒子系统而非完整实体
+- 命中点缓存避免重复计算
+- 限制同时存在的命中特效数量
+
+## 模型渲染
+
+### 手持模型(First Person)
+- 使用 IClientItemExtensions 现代方式
+- 缓存 BakedModel 实例
+- 简化第一人称手臂模型
+- 使用正确的 RenderLayer
+
+### 第三人称模型(Third Person)
+- 分离第一人称和第三人称模型
+- 第三人称使用简化模型
+- 距离剔除远处的枪械模型
+
+### GUI显示模型
+- 使用 BakedModel 而非即时模式渲染
+- 预加载模型到内存
+- 避免重复模型转换
+
+## 瞄准镜覆盖层(Scope Overlay)
+- 使用 GuiGraphics 绘制 2D 叠加层
+- 禁止手动操作 OpenGL 状态
+- 仅在瞄准时渲染,使用 cooldown 防止闪烁
+- 考虑使用预渲染的纹理
+
+## 纹理优化
+- 纹理尺寸使用 2 的幂次(256x256, 512x512)
+- 合并相似的纹理图集
+- 使用纹理压缩格式
+- 避免高分辨率纹理用于简单效果
+
+## 渲染批次优化
+- 批处理相似的渲染任务
+- 减少状态切换(RenderType, Shader, Texture)
+- 使用 Instanced Rendering 处理重复几何体
+
+## 性能监控
+- 使用 Spark Profiler 监控渲染时间
+- 监控 draw calls 数量
+- 监控 VRAM 使用量
+- F3 查看帧率和渲染时间
+
+## 参考实现
+- TACZ 模组的枪械渲染代码
+- Embeddium 的批量渲染优化
+- Iris 的阴影剔除优化

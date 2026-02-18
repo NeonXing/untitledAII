@@ -1,0 +1,71 @@
+---
+description: 
+alwaysApply: true
+enabled: true
+updatedAt: 2026-02-18T01:42:22.011Z
+provider: 
+---
+
+# AVA模组代码质量规范
+
+## 命名规范
+- 类名: PascalCase (如 `GunRegistry`, `BulletEntity`)
+- 方法名: camelCase (如 `fireBullet()`, `reload()`)
+- 常量: UPPER_SNAKE_CASE (如 `MAX_AMMO`, `FIRE_RATE`)
+- 私有字段: camelCase (如 `currentAmmo`, `isReloading`)
+
+## 代码结构
+- 每个类单一职责
+- 避免超过 200 行的方法
+- 使用设计模式(工厂模式、单例模式、策略模式)
+- 避免深层嵌套(不超过 4 层)
+
+## 错误处理
+- 关键操作添加 null 检查
+- 使用 try-catch 处理可能失败的资源加载
+- 记录异常到日志(LOGGER.error())
+- 避免空的 catch 块
+
+## 日志规范
+- 使用 LogUtils.getLogger()
+- 等级划分: debug/trace(开发)、info(正常)、warn(警告)、error(错误)
+- 关键操作记录 info 日志
+- 性能问题记录 debug 日志
+
+## 注释规范
+- 公共 API 必须添加 JavaDoc 注释
+- 复杂逻辑添加行内注释
+- TODO/FIXME 标记待办事项
+- 禁止注释掉的代码,直接删除
+
+## 性能相关
+- 避免热点代码中的反射调用
+- 缓存频繁访问的数据
+- 使用 StringBuilder 拼接字符串
+- 避免不必要的对象创建
+
+## 安全性
+- 服务器操作在服务端校验
+- 客户端只负责显示
+- 禁止在包间发送敏感数据
+- 使用 Capability 管理玩家数据
+
+## 测试
+- 关键功能添加单元测试
+- 使用 GameTest 框架
+- 测试不同 Minecraft 版本兼容性
+
+## Git 提交规范
+- 标题: 简短描述变更内容
+- 详细: 说明变更原因和影响
+- 使用英文: `feat: add gun firing system`
+- 修复: `fix: resolve crash on reload`
+
+## 代码审查检查清单
+- [ ] 命名符合规范
+- [ ] 没有魔法数字,使用常量
+- [ ] 没有空 catch 块
+- [ ] 日志记录恰当
+- [ ] 性能无问题
+- [ ] 没有内存泄漏风险
+- [ ] 通过所有测试
