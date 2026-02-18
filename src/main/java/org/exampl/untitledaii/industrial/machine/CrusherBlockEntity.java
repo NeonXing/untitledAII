@@ -2,16 +2,19 @@ package org.exampl.untitledaii.industrial.machine;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.exampl.untitledaii.industrial.ModBlockEntities;
+import org.exampl.untitledaii.industrial.machine.recipes.MachineRecipe;
+import org.exampl.untitledaii.industrial.machine.recipes.MachineRecipeType;
 
 /**
- * Crusher block entity for crushing ores into dust.
+ * Crusher block entity for crushing ores into ingots.
  *
  * <p>Processing:</p>
  * <ul>
  *   <li>Input slot 0: Ore to crush</li>
- *   <li>Output slot 1: Crushed dust (2x output)</li>
+ *   <li>Output slot 1: Crushed ingots (2x output)</li>
  *   <li>Process time: 100 ticks (5 seconds)</li>
  *   <li>Energy: 20 FE/tick</li>
  * </ul>
@@ -27,6 +30,8 @@ public class CrusherBlockEntity extends BaseMachineBlockEntity {
     private static final int PROCESS_TIME = 100;
     private static final int ENERGY_PER_TICK = 20;
 
+    private MachineRecipe currentRecipe;
+
     public CrusherBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.CRUSHER.get(), pos, state,
             ENERGY_CAPACITY, MAX_ENERGY_RECEIVE, MAX_ENERGY_EXTRACT,
@@ -38,6 +43,9 @@ public class CrusherBlockEntity extends BaseMachineBlockEntity {
 
     @Override
     protected int getEnergyPerTick() {
+        if (currentRecipe != null) {
+            return currentRecipe.getEnergyRequired() / currentRecipe.getProcessTime();
+        }
         return ENERGY_PER_TICK;
     }
 
@@ -45,28 +53,39 @@ public class CrusherBlockEntity extends BaseMachineBlockEntity {
     protected boolean findRecipe() {
         ItemStack input = inventory.getStackInSlot(0);
         if (input.isEmpty()) {
+            currentRecipe = null;
             return false;
         }
 
-        // Simple ore crushing recipes (can be expanded)
-        String itemName = input.getItem().toString().toLowerCase();
-        boolean isValidOre = itemName.contains("ore") ||
-                            itemName.contains("raw");
-
-        if (isValidOre) {
-            return true;
+        if (level == null) {
+            currentRecipe = null;
+            return false;
         }
 
-        return false;
+        currentRecipe = MachineRecipeType.findRecipe(level, input);
+        if (currentRecipe != null) {
+            maxProcessTime = currentRecipe.getProcessTime();
+        }
+
+        return currentRecipe != null;
     }
 
     @Override
     protected boolean hasOutputSpace() {
+        if (currentRecipe == null) {
+            return true;
+        }
+
         ItemStack outputSlot = inventory.getStackInSlot(1);
         if (outputSlot.isEmpty()) {
             return true;
         }
-        return outputSlot.getCount() < outputSlot.getMaxStackSize();
+
+        ItemStack firstOutput = currentRecipe.getOutputs().get(0);
+        if (outputSlot.sameItem(firstOutput)) {
+            return outputSlot.getCount() + firstOutput.getCount() <= outputSlot.getMaxStackSize();
+        }
+        return outputSlot.isEmpty();
     }
 
     @Override
@@ -77,27 +96,19 @@ public class CrusherBlockEntity extends BaseMachineBlockEntity {
 
     @Override
     protected void produceOutputs() {
-        ItemStack input = inventory.getStackInSlot(0);
-        String itemName = input.getItem().toString().toLowerCase();
-
-        // Determine output based on input
-        ItemStack output;
-        if (itemName.contains("iron")) {
-            output = new ItemStack(net.minecraft.world.level.block.Blocks.IRON_BLOCK, 2);
-        } else if (itemName.contains("gold")) {
-            output = new ItemStack(net.minecraft.world.level.block.Blocks.GOLD_BLOCK, 2);
-        } else if (itemName.contains("copper")) {
-            output = new ItemStack(net.minecraft.world.level.block.Blocks.COPPER_BLOCK, 2);
-        } else {
-            output = new ItemStack(net.minecraft.world.item.Items.GRAVEL, 2);
+        if (currentRecipe == null) {
+            return;
         }
 
-        // Add to output slot
-        ItemStack outputSlot = inventory.getStackInSlot(1);
-        if (outputSlot.isEmpty()) {
-            inventory.setStackInSlot(1, output.copy());
-        } else if (outputSlot.sameItem(output)) {
-            outputSlot.grow(output.getCount());
+        for (ItemStack output : currentRecipe.getOutputs()) {
+            ItemStack outputSlot = inventory.getStackInSlot(1);
+            if (outputSlot.isEmpty()) {
+                inventory.setStackInSlot(1, output.copy());
+            } else if (outputSlot.sameItem(output)) {
+                outputSlot.grow(output.getCount());
+            } else {
+                inventory.setStackInSlot(1, output.copy());
+            }
         }
     }
 }

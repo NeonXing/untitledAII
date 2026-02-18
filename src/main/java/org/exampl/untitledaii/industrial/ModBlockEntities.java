@@ -6,6 +6,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.exampl.untitledaii.Untitledaii;
 import org.exampl.untitledaii.industrial.energy.EnergyCableBlockEntity;
+import org.exampl.untitledaii.industrial.machine.CrusherBlockEntity;
 
 /**
  * Block entity registry for industrial mod.
@@ -23,5 +24,12 @@ public class ModBlockEntities {
             () -> BlockEntityType.Builder.of(
                 EnergyCableBlockEntity::new,
                 ModBlocks.ENERGY_CABLE.get()
+            ).build(null));
+
+    public static final RegistryObject<BlockEntityType<CrusherBlockEntity>> CRUSHER = 
+        BLOCK_ENTITIES.register("crusher",
+            () -> BlockEntityType.Builder.of(
+                CrusherBlockEntity::new,
+                ModBlocks.CRUSHER.get()
             ).build(null));
 }

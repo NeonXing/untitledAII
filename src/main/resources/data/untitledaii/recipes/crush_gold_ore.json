@@ -1,0 +1,16 @@
+{
+  "type": "untitledaii:machine",
+  "inputs": [
+    {
+      "item": "minecraft:gold_ore"
+    }
+  ],
+  "outputs": [
+    {
+      "item": "minecraft:gold_ingot",
+      "count": 2
+    }
+  ],
+  "process_time": 100,
+  "energy_required": 500
+}

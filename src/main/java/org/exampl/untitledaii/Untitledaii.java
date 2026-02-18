@@ -65,6 +65,9 @@ public class Untitledaii {
         // Register industrial mod components
         ModBlocks.BLOCKS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
+        ModContainers.CONTAINERS.register(modEventBus);
+        org.exampl.untitledaii.industrial.machine.recipes.MachineRecipeType.RECIPE_TYPE.register(modEventBus);
+        org.exampl.untitledaii.industrial.machine.recipes.MachineRecipeType.SERIALIZER.register(modEventBus);
         ITEMS.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
         
