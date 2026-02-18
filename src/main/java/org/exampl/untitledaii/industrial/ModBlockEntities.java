@@ -5,6 +5,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.exampl.untitledaii.Untitledaii;
+import org.exampl.untitledaii.industrial.conveyor.ConveyorBeltBlockEntity;
 import org.exampl.untitledaii.industrial.energy.EnergyCableBlockEntity;
 import org.exampl.untitledaii.industrial.machine.CrusherBlockEntity;
 
@@ -31,5 +32,12 @@ public class ModBlockEntities {
             () -> BlockEntityType.Builder.of(
                 CrusherBlockEntity::new,
                 ModBlocks.CRUSHER.get()
+            ).build(null));
+
+    public static final RegistryObject<BlockEntityType<ConveyorBeltBlockEntity>> CONVEYOR_BELT = 
+        BLOCK_ENTITIES.register("conveyor_belt",
+            () -> BlockEntityType.Builder.of(
+                ConveyorBeltBlockEntity::new,
+                ModBlocks.CONVEYOR_BELT.get()
             ).build(null));
 }
