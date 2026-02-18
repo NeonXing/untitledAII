@@ -11,6 +11,7 @@ import org.exampl.untitledaii.Untitledaii;
 import org.exampl.untitledaii.industrial.conveyor.ConveyorBeltBlock;
 import org.exampl.untitledaii.industrial.energy.EnergyCableBlock;
 import org.exampl.untitledaii.industrial.machine.CrusherBlockEntity;
+import org.exampl.untitledaii.industrial.pipe.ItemPipeBlock;
 
 /**
  * Block registry for industrial mod.
@@ -31,4 +32,7 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> CONVEYOR_BELT = BLOCKS.register("conveyor_belt",
         () -> new ConveyorBeltBlock());
+
+    public static final RegistryObject<Block> ITEM_PIPE = BLOCKS.register("item_pipe",
+        () -> new ItemPipeBlock());
 }

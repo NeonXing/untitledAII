@@ -8,6 +8,7 @@ import org.exampl.untitledaii.Untitledaii;
 import org.exampl.untitledaii.industrial.conveyor.ConveyorBeltBlockEntity;
 import org.exampl.untitledaii.industrial.energy.EnergyCableBlockEntity;
 import org.exampl.untitledaii.industrial.machine.CrusherBlockEntity;
+import org.exampl.untitledaii.industrial.pipe.ItemPipeBlockEntity;
 
 /**
  * Block entity registry for industrial mod.
@@ -39,5 +40,12 @@ public class ModBlockEntities {
             () -> BlockEntityType.Builder.of(
                 ConveyorBeltBlockEntity::new,
                 ModBlocks.CONVEYOR_BELT.get()
+            ).build(null));
+
+    public static final RegistryObject<BlockEntityType<ItemPipeBlockEntity>> ITEM_PIPE = 
+        BLOCK_ENTITIES.register("item_pipe",
+            () -> BlockEntityType.Builder.of(
+                ItemPipeBlockEntity::new,
+                ModBlocks.ITEM_PIPE.get()
             ).build(null));
 }
